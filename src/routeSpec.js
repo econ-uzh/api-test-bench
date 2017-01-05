@@ -110,7 +110,10 @@ class RouteSpec {
   runAuthenticatedAs(user) {
     describe(`${this.modelName} routes test authenticated as ${user.username}`, () => {
       beforeEach((done) => {
-        this.validate.signin(user, this.requests.signin(user), done);
+        this.validate.signin(user, this.requests.signin(user), (err, token) => {
+          this.token = token;
+          return done();
+        });
       });
       let tests = Object.keys(this.pipeline);
       tests.forEach(method => {
@@ -118,7 +121,10 @@ class RouteSpec {
         this.pipeline[method].forEach(s => s(isAuthorized));
       });
       after((done) => {
-        this.validate.signout(this.requests.signout(user), done);
+        this.validate.signout(this.requests.signout(), () => {
+          this.token = null;
+          return done();
+        });
       });
     });
   }

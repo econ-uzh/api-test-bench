@@ -87,6 +87,10 @@ class RouteSpec {
     if (isAuthorized) specs.get.authorized(this);
     else specs.get.unauthorized(this);
   }
+  addGet(getFnc) {
+    if (typeof getFnc !== 'function') throw new TypeError('must be a function');
+    else this.pipeline.get.push((p) => getFnc(this, p));
+  }
   getById(isAuthorized) {
     if (isAuthorized) specs.getById.authorized(this);
     else specs.getById.unauthorized(this);

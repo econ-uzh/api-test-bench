@@ -195,4 +195,20 @@ function randomString(length) {
   }).join('');
 }
 
+function parseOptions(_options, options) {
+  // TODO: add better options parser
+  let opt = JSON.parse(JSON.stringify(options));
+  let parsedOptions = {};
+  if (opt && Object.keys(opt).length > 0) {
+    Object.keys(_options).forEach(o => {
+      parsedOptions[o] = opt[o];
+    });
+  }
+  if (options && options.filter && options.filter.model) {
+    // reattach mongoose model if there was one
+    parsedOptions.filter.model = options.filter.model;
+  }
+  return parsedOptions;
+}
+
 module.exports = RouteSpec;

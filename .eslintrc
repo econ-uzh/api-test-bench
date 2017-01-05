@@ -1,0 +1,42 @@
+{
+  "env": {
+      "es6": true,
+      "node": true,
+      "mocha": true
+  },
+  "extends": [
+    "plugin:node/recommended"
+  ],
+  "plugins": [
+    "node"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "rules": {
+    "node/no-unpublished-require": ["error", {
+         "allowModules": ["chai", "chai-http"]
+     }],
+    "indent": [
+        "error",
+        2,
+        { "SwitchCase": 1 }
+    ],
+    "linebreak-style": [
+        "error",
+        "unix"
+    ],
+    "quotes": [
+        "error",
+        "single"
+    ],
+    "semi": [
+        "error",
+        "always"
+    ],
+    "max-len": ["error", 90, { "ignoreComments": true }],
+    "no-console":  ["error", { "allow": ["warn", "error"] }],
+    "no-unused-vars": ["error", {"args": "none"}]
+  }
+}

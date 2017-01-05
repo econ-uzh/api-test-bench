@@ -1,0 +1,37 @@
+{
+  "name": "econ-api-test-bench",
+  "version": "0.0.1",
+  "description": "A test bench for testing internal rest api's",
+  "main": "index.js",
+  "engines": {
+    "node": ">=6.9.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/econ-uzh/api-test-bench.git"
+  },
+  "keywords": [
+    "node",
+    "mocha",
+    "chai",
+    "es6",
+    "mongoose"
+  ],
+  "author": "Adrian Etter",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/econ-uzh/api-test-bench/issues"
+  },
+  "homepage": "https://github.com/econ-uzh/api-test-bench#readme",
+  "devDependencies": {
+    "eslint": "^3.12.2",
+    "eslint-plugin-node": "^3.0.5"
+  },
+  "dependencies": {
+    "chai": "^3.5.0",
+    "mongoose": "^4.7.6"
+  }
+}

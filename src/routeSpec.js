@@ -6,7 +6,7 @@ const ResponseValidator = require('./responseValidator');
 
 class RouteSpec {
 
-  constructor(model, url, agent, options) {
+  constructor(model, url, request, options) {
     if (new.target === RouteSpec) {
       throw new TypeError('Cannot construct Abstract instance RouteSpec directly');
     }
@@ -40,7 +40,8 @@ class RouteSpec {
       }
     };
     this.setOptions(options);
-    this.agent = agent;
+    this.request = request;
+    this.token = null;
 
     this.setResponseValidator(new ResponseValidator());
     this.registerRequests();
@@ -58,15 +59,15 @@ class RouteSpec {
     let url = apiUrl + this.url;
     if (url.substr(-1) !== '/') url += '/';
     this.requests = {
-      get: () => this.agent.get(url),
-      query: (query) => this.agent.get(url + query),
-      getOne: (model) => this.agent.get(url + model._id),
-      post: (model) => this.agent.post(url).send(model),
-      put: (model) => this.agent.put(url + model._id).send(model),
-      delete: (model) => this.agent.del(url + model._id),
-      signout: () => this.agent.post(apiUrl + 'auth/signout'),
-      signin: (user, agent) => {
-        return (agent || this.agent)
+      get: (u) => this.next(this.request.get(u || url)),
+      query: (query, u) => this.next(this.request.get((u || url) + query)),
+      getOne: (model, u) => this.next(this.request.get((u || url) + model._id)),
+      post: (model, u) => this.next(this.request.post((u || url)).send(model)),
+      put: (model, u) => this.next(this.request.put((u || url) + model._id).send(model)),
+      delete: (model, u) => this.next(this.request.del((u || url) + model._id)),
+      signout: () => this.request.post(apiUrl + 'auth/signout'),
+      signin: (user, request) => {
+        return (request || this.request)
         .post(apiUrl + 'auth/signin/')
         .send(user);
       }
@@ -174,6 +175,10 @@ class RouteSpec {
     role =  typeof role === 'string' ? [role] : role;
     let roles = user.roles;
     return role.some(r => roles.indexOf(r) > -1);
+  }
+  next(request){
+    if (this.token) return request.set('Authorization', 'Bearer '  + this.token);
+    else return request;
   }
 }
 

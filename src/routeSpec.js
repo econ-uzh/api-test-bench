@@ -10,6 +10,7 @@ class RouteSpec {
     if (new.target === RouteSpec) {
       throw new TypeError('Cannot construct Abstract instance RouteSpec directly');
     }
+
     this.url = url;
     this.model = model;
     this.modelName = this.model.modelName.toLowerCase();
@@ -29,7 +30,14 @@ class RouteSpec {
       select: [],
       deselected: '',
       required: '',
-      checkInvalid: false
+      checkInvalid: false,
+      permissions: {
+        get: ['*'],
+        getById: ['*'],
+        post: ['*'],
+        put: ['*'],
+        delete: ['*']
+      }
     };
     this.setOptions(options);
     this.agent = agent;
@@ -38,11 +46,11 @@ class RouteSpec {
     this.registerRequests();
 
     this.pipeline = {
-      get: [() => this.get()],
-      getById: [() => this.getById()],
-      post: [() => this.post()],
-      put: [() => this.put()],
-      delete: [() => this.delete()]
+      get: [(p) => this.get(p)],
+      getById: [(p) => this.getById(p)],
+      post: [(p) => this.post(p)],
+      put: [(p) => this.put(p)],
+      delete: [(p) => this.delete(p)]
     };
   }
 
@@ -66,12 +74,7 @@ class RouteSpec {
   }
 
   setOptions(options) {
-    // TODO: add options parser
-    if (options && Object.keys(options)) {
-      Object.keys(this.options).forEach(o => {
-        this.options[o] = options[o];
-      });
-    }
+    this.options = parseOptions(this.options, options);
   }
   setResponseValidator(validator) {
     if (validator instanceof ResponseValidator) {
@@ -79,23 +82,28 @@ class RouteSpec {
     } else throw new TypeError('validator must be of type ResponseValidator');
   }
 
-  get() {
-    specs.get(this);
+  get(isAuthorized) {
+    if (isAuthorized) specs.get.authorized(this);
+    else specs.get.unauthorized(this);
   }
-  getById() {
-    specs.getById(this);
-  }
-
-  post() {
-    specs.post(this);
+  getById(isAuthorized) {
+    if (isAuthorized) specs.getById.authorized(this);
+    else specs.getById.unauthorized(this);
   }
 
-  put() {
-    specs.put(this);
+  post(isAuthorized) {
+    if (isAuthorized) specs.post.authorized(this);
+    else specs.post.unauthorized(this);
   }
 
-  delete() {
-    specs.delete(this);
+  put(isAuthorized) {
+    if (isAuthorized) specs.put.authorized(this);
+    else specs.put.unauthorized(this);
+  }
+
+  delete(isAuthorized) {
+    if (isAuthorized) specs.delete.authorized(this);
+    else specs.delete.unauthorized(this);
   }
 
   runAuthenticatedAs(user) {
@@ -104,8 +112,9 @@ class RouteSpec {
         this.validate.signin(user, this.requests.signin(user), done);
       });
       let tests = Object.keys(this.pipeline);
-      tests.forEach(suit => {
-        this.pipeline[suit].forEach(s => s(this.agent));
+      tests.forEach(method => {
+        let isAuthorized = this.isAuthorized(user, method);
+        this.pipeline[method].forEach(s => s(isAuthorized));
       });
       after((done) => {
         this.validate.signout(this.requests.signout(user), done);
@@ -159,6 +168,12 @@ class RouteSpec {
         model.save(callback);
       }
     });
+  }
+  isAuthorized(user, method) {
+    let role = this.options.permissions[method];
+    role =  typeof role === 'string' ? [role] : role;
+    let roles = user.roles;
+    return role.some(r => roles.indexOf(r) > -1);
   }
 }
 

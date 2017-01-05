@@ -4,7 +4,7 @@ const should = require('chai').should();
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
-module.exports = (Spec) => {
+module.exports.authorized = (Spec) => {
   let Model = Spec.model;
   let requests = Spec.requests;
   let validate = Spec.validate;
@@ -13,7 +13,7 @@ module.exports = (Spec) => {
   let pluralName = Spec.pluralName;
 
   let model;
-  
+
   describe(`POST /${pluralName}/`, () => {
     beforeEach(done => {
       Model.findOne({}, (err, result) => {
@@ -75,5 +75,33 @@ module.exports = (Spec) => {
           });
         });
     }
+  });
+};
+module.exports.unauthorized = (Spec) => {
+  let Model = Spec.model;
+  let requests = Spec.requests;
+  let modelName = Spec.modelName;
+  let pluralName = Spec.pluralName;
+  let validate = Spec.validate;
+
+  describe(`POST /${pluralName}/`, () => {
+    let model;
+    beforeEach(done => {
+      Model.findOne({}, (err, result) => {
+        should.not.exist(err);
+        should.exist(result);
+        result = result.toObject();
+        result.should.be.an.Object;
+        model = Spec.duplicateModel(result);
+        model = Spec.createRandomModel(model);
+        return done();
+      });
+    });
+    it(`should not create a ${modelName}`, (done) => {
+      requests.post(model).end((err, res) => {
+        validate.forbidden(err, res);
+        return done();
+      });
+    });
   });
 };

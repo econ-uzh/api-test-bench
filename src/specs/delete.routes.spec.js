@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
 
-module.exports = (Spec) => {
+module.exports.authorized = (Spec) => {
   let Model = Spec.model;
   let requests = Spec.requests;
   let validate = Spec.validate;
@@ -49,6 +49,31 @@ module.exports = (Spec) => {
           message: `${Model.modelName} ${model._id} does not exist`
         };
         validate.notFound(err, res, error);
+        return done();
+      });
+    });
+  });
+};
+
+module.exports.unauthorized = (Spec) => {
+  let requests = Spec.requests;
+  let modelName = Spec.modelName;
+  let pluralName = Spec.pluralName;
+  let validate = Spec.validate;
+
+  describe(`DELETE /${pluralName}/:id`, () => {
+    let model;
+    beforeEach(done => {
+      Spec.findAndDuplicateModel((err, result) => {
+        should.not.exist(err);
+        should.exist(result);
+        model = result.toObject();
+        return done();
+      });
+    });
+    it(`should not delete a ${modelName}`, done => {
+      requests.delete(model).end((err, res) => {
+        validate.forbidden(err, res);
         return done();
       });
     });

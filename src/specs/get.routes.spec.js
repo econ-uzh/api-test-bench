@@ -1,9 +1,8 @@
 'use strict';
 
 const should = require('chai').should();
-const mongoose = require('mongoose');
 
-module.exports = (Spec) => {
+module.exports.authorized = (Spec) => {
   let Model = Spec.model;
   let requests = Spec.requests;
   let options = Spec.options;
@@ -108,6 +107,21 @@ module.exports = (Spec) => {
         requests.query('?select=' + options.select.join(' ')),
         done
       );
+    });
+  });
+};
+
+module.exports.unauthorized = (Spec) => {
+  let requests = Spec.requests;
+  let validate = Spec.validate;
+  let pluralName = Spec.pluralName;
+
+  describe(`GET /${pluralName}/`, () => {
+    it(`should not be possible to get all ${pluralName}`, (done) => {
+      requests.get().end((err, res) => {
+        validate.forbidden(err, res);
+        return done();
+      });
     });
   });
 };

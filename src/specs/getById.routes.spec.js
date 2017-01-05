@@ -4,7 +4,7 @@ const should = require('chai').should();
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
-module.exports = (Spec) => {
+module.exports.authorized = (Spec) => {
   let Model = Spec.model;
   let requests = Spec.requests;
   let validate = Spec.validate;
@@ -48,6 +48,31 @@ module.exports = (Spec) => {
           message: 'Invalid id'
         };
         validate.badRequest(err, res, error);
+        return done();
+      });
+    });
+  });
+};
+
+module.exports.unauthorized = (Spec) => {
+  let requests = Spec.requests;
+  let modelName = Spec.modelName;
+  let pluralName = Spec.pluralName;
+  let validate = Spec.validate;
+
+  describe(`GET /${pluralName}/:id`, () => {
+    let model;
+    beforeEach(done => {
+      Spec.findAndDuplicateModel((err, result) => {
+        should.not.exist(err);
+        should.exist(result);
+        model = result.toObject();
+        return done();
+      });
+    });
+    it(`should not get a ${modelName}`, (done) => {
+      requests.getOne(model).end((err, res) => {
+        validate.forbidden(err, res);
         return done();
       });
     });

@@ -57,31 +57,45 @@ class ResponseValidator {
     });
   }
 
-  signin(user, req, done)  {
+  signin(user, req, callback)  {
     req.end((err, res) => {
       should.not.exist(err);
       should.exist(res);
       res.should.have.status(200);
       res.should.have.property('body');
-      res.body.should.have.property('firstName');
-      res.body.firstName.should.equal(user.firstName);
-      res.body.should.have.property('lastName');
-      res.body.lastName.should.equal(user.lastName);
-      res.body.should.have.property('username');
-      res.body.username.should.equal(user.username);
-      res.body.should.have.property('email');
-      res.body.email.should.equal(user.email);
-      res.body.should.have.property('roles');
-      res.body.roles.should.be.a('array');
-      res.body.roles.forEach((r)  => {
+
+      let resUser;
+      let token = res.body.token;
+
+      if (token) {
+        res.body.should.have.property('user');
+        res.body.should.have.property('token');
+        token.should.have.length.above(20);
+        resUser = res.body.user;
+      } else {
+        resUser = res.body;
+      }
+
+      resUser.should.have.property('firstName');
+      resUser.firstName.should.equal(user.firstName);
+      resUser.should.have.property('lastName');
+      resUser.lastName.should.equal(user.lastName);
+      resUser.should.have.property('username');
+      resUser.username.should.equal(user.username);
+      resUser.should.have.property('email');
+      resUser.email.should.equal(user.email);
+      resUser.should.have.property('roles');
+      resUser.roles.should.be.a('array');
+      resUser.roles.forEach((r) => {
         user.roles.indexOf(r).should.be.above(-1);
       });
-      return done();
+
+      return callback(null, token);
+
     });
-    // return callback(err, req);
   }
 
-  signout(req, done)  {
+  signout(req, callback)  {
     req.end((err, res) => {
       should.not.exist(err);
       should.exist(res);
@@ -89,7 +103,7 @@ class ResponseValidator {
       res.should.have.property('body');
       res.body.should.have.property('message');
       res.body.message.should.equal('logout successful');
-      return done();
+      return callback();
     });
   }
 

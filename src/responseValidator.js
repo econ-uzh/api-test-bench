@@ -1,6 +1,7 @@
 'use strict';
 
 const should = require('chai').should();
+const isValidId = require('mongoose').Types.ObjectId.isValid;
 
 const errors = {
   forbidden: {
@@ -12,6 +13,21 @@ const errors = {
     status: 400,
     id: 'validationerror',
     message: 'validation failed'
+  },
+  invalid: (model, field) => {
+    return {
+      id: 'validationerror',
+      message: `${model} validation failed`,
+      status: 400,
+      fields: field
+    };
+  },
+  duplicate: (model) => {
+    return {
+      id: 'duplicate',
+      message: `${model} already exists`,
+      status: 400
+    };
   },
   notFound: {
     status: 404,
@@ -75,7 +91,7 @@ class ResponseValidator {
       } else {
         resUser = res.body;
       }
-
+      should.exist(resUser);
       resUser.should.have.property('firstName');
       resUser.firstName.should.equal(user.firstName);
       resUser.should.have.property('lastName');
@@ -177,7 +193,20 @@ class ResponseValidator {
         this.timestamps(resModel.timestamps, testModel.timestamps);
       } else {
         resModel.should.have.property(field);
-        resModel[field].should.eql(testModel[field]);
+        if (isValidId(resModel[field]) || isValidId(testModel[field]))
+        {
+          if (typeof resModel[field] !== 'object') {
+            resModel[field].toString().should.eql(testModel[field].toString());
+          } // else disregard populated content
+        } else if (Date.parse(resModel[field])) {
+          // don't check
+        }
+        else {
+          if (resModel[field] !== null || testModel[field] !== null) {
+            resModel[field].should.eql(testModel[field]);
+          } // else it's supposed to be null
+
+        }
       }
     });
     // should never have a password or a salt in a model
@@ -213,6 +242,16 @@ class ResponseValidator {
     validateError(err, res, error);
   }
 
+  validationError(Model, field, err, res) {
+    let error = errors.invalid(Model, field);
+    validateError(err, res, error);
+    res.body.error.should.have.property('fields');
+    res.body.error.fields.should.have.property(error.fields);
+  }
+  duplicateError(Model, err, res) {
+    let error = errors.duplicate(Model);
+    validateError(err, res, error);
+  }
   badRequest(err, res, error) {
     error = error || errors.badRequest;
     error.status = error.status || 400;
@@ -243,6 +282,7 @@ function findModelInResponse(models, model) {
 }
 
 function validateSuccess(err, res, status) {
+  if (err) console.warn(err);
   should.not.exist(err);
   should.exist(res);
   res.should.be.json;

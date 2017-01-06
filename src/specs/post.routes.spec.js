@@ -16,13 +16,10 @@ module.exports.authorized = (Spec) => {
 
   describe(`POST /${pluralName}/`, () => {
     beforeEach(done => {
-      Model.findOne({}, (err, result) => {
+      Spec.findModel((err, result) => {
         should.not.exist(err);
         should.exist(result);
-        result = result.toObject();
-        result.should.be.an.Object;
-        model = Spec.duplicateModel(result);
-        model = Spec.createRandomModel(model);
+        model = result;
         delete model.timestamps;
         return done();
       });

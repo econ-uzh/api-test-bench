@@ -235,4 +235,13 @@ function parseOptions(_options, options) {
   return parsedOptions;
 }
 
+function validateFunction(fnc) {
+  if (typeof fnc !== 'function') throw new TypeError('must be a function');
+}
+function validateMethod(methods, method) {
+  if (methods.indexOf(method) < 0)
+    throw new Error('invalid pipeline method specified, ' +
+    'only get, getById, post, put, delete is available');
+}
+
 module.exports = RouteSpec;

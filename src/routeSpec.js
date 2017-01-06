@@ -88,35 +88,55 @@ class RouteSpec {
     else specs.get.unauthorized(this);
   }
   addGet(getFnc) {
-    if (typeof getFnc !== 'function') throw new TypeError('must be a function');
-    else this.pipeline.get.push((p) => getFnc(this, p));
+    this.addToPipline('get', getFnc);
   }
   getById(isAuthorized) {
     if (isAuthorized) specs.getById.authorized(this);
     else specs.getById.unauthorized(this);
+  }
+  addGetById(getFnc) {
+    this.addToPipline('getById', getFnc);
   }
 
   post(isAuthorized) {
     if (isAuthorized) specs.post.authorized(this);
     else specs.post.unauthorized(this);
   }
-
+  addPost(getFnc) {
+    this.addToPipline('post', getFnc);
+  }
   put(isAuthorized) {
     if (isAuthorized) specs.put.authorized(this);
     else specs.put.unauthorized(this);
+  }
+  addPut(getFnc) {
+    this.addToPipline('put', getFnc);
   }
 
   delete(isAuthorized) {
     if (isAuthorized) specs.delete.authorized(this);
     else specs.delete.unauthorized(this);
   }
+  addDelete(getFnc) {
+    this.addToPipline('delete', getFnc);
+  }
+
+  addToPipline(method, fnc) {
+    validateFunction(fnc);
+    validateMethod(Object.keys(this.pipeline), method);
+    this.pipeline[method].push((p) => fnc(this, p));
+  }
 
   runAuthenticatedAs(user) {
     describe(`${this.modelName} routes test authenticated as ${user.username}`, () => {
       beforeEach((done) => {
-        this.validate.signin(user, this.requests.signin(user), (err, token) => {
-          this.token = token;
-          return done();
+        this.model.findOne({username: user.username}, (err, result) => {
+          // validate against db and not against provided user
+          // => resolves issue if user was updated
+          this.validate.signin(result, this.requests.signin(user), (err, token) => {
+            this.token = token;
+            return done();
+          });
         });
       });
       let tests = Object.keys(this.pipeline);

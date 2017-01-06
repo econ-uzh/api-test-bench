@@ -63,8 +63,8 @@ class RouteSpec {
       query: (query, u) => this.next(this.request.get((u || url) + query)),
       getOne: (model, u) => this.next(this.request.get((u || url) + model._id)),
       post: (model, u) => this.next(this.request.post((u || url)).send(model)),
-      put: (model, u) => this.next(this.request.put((u || url) + model._id).send(model)),
-      delete: (model, u) => this.next(this.request.del((u || url) + model._id)),
+      put: (model, u) => this.next(this.request.put(u || (url + model._id)).send(model)),
+      delete: (model, u) => this.next(this.request.del(u || (url + model._id))),
       signout: () => this.request.post(apiUrl + 'auth/signout'),
       signin: (user, request) => {
         return (request || this.request)

@@ -130,13 +130,9 @@ class RouteSpec {
   runAuthenticatedAs(user) {
     describe(`${this.modelName} routes test authenticated as ${user.username}`, () => {
       beforeEach((done) => {
-        this.model.findOne({username: user.username}, (err, result) => {
-          // validate against db and not against provided user
-          // => resolves issue if user was updated
-          this.validate.signin(result, this.requests.signin(user), (err, token) => {
-            this.token = token;
-            return done();
-          });
+        this.validate.signin(user, this.requests.signin(user), (err, token) => {
+          this.token = token;
+          return done();
         });
       });
       let tests = Object.keys(this.pipeline);
@@ -188,15 +184,23 @@ class RouteSpec {
     }
     return model;
   }
-  findAndDuplicateModel(callback) {
+  findModel(callback) {
     this.model.findOne({}, (err, result) => {
       if (err) return callback(err, null);
       else {
         result = result.toObject();
         let model = this.duplicateModel(result);
         model = this.createRandomModel(model);
-        model = new this.model(model);
-        model.save(callback);
+        return callback(null, model);
+      }
+    });
+  }
+  findAndDuplicateModel(callback) {
+    this.findModel((err, result) => {
+      if (err) return callback(err, null);
+      else {
+        result = new this.model(result);
+        result.save(callback);
       }
     });
   }
@@ -204,7 +208,7 @@ class RouteSpec {
     let role = this.options.permissions[method];
     role =  typeof role === 'string' ? [role] : role;
     let roles = user.roles;
-    return role.some(r => roles.indexOf(r) > -1);
+    return role.some(r => roles.indexOf(r) > -1) ? role[0] : false;
   }
   next(request){
     if (this.token) return request.set('Authorization', 'Bearer '  + this.token);

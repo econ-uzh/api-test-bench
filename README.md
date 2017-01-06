@@ -37,7 +37,14 @@ let options = {
   select: ['firstName', 'lastName'],
   deselected: 'username',
   required: 'email',
-  checkInvalid: true
+  checkInvalid: true,
+  permissions: {
+    get: ['admin', 'captain', 'accountant'],
+    getById: ['admin', 'captain', 'accountant'],
+    post: ['admin', 'captain'],
+    put: ['admin', 'captain'],
+    delete: ['admin']
+  }
 };
 
 class UserBench extends RouteSpec {
@@ -53,6 +60,12 @@ module.exports.unauthenticated = (agent) => {
 module.exports.authenticated = (user, agent) => {
   options.filter.value = user.username;
   let userBench = new UserBench(User, url, agent, options);
+  userBench.addGet(extraGet);
+  userBench.addPut(extraPut);
   userBench.runAuthenticatedAs(user);
 };
+
 ```
+
+### add custom tests:
+custom tests can be added with `addGet`, `addPost`, `addPut`, `addDelete`

@@ -206,10 +206,14 @@ class RouteSpec {
   }
   isAuthorized(user, method) {
     let role = this.options.permissions[method];
+
+    if (!role) return false;
+    
     role =  typeof role === 'string' ? [role] : role;
     let roles = user.roles;
     return role.some(r => roles.indexOf(r) > -1) ? role[0] : false;
   }
+
   next(request){
     if (this.token) return request.set('Authorization', 'Bearer '  + this.token);
     else return request;

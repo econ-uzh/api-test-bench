@@ -45,7 +45,7 @@ const errors = {
     message: 'User is not authenticated'
   },
   invalidAuth: {
-    status: 401,
+    status: 400,
     id: 'invalidcredential',
     message: 'invalid user/password combination'
   },
@@ -69,8 +69,8 @@ class ResponseValidator {
 
   }
 
-  invalidAuth(error, req, done)  {
-    req((err, res) => {
+  invalidAuth(req, done, error)  {
+    req.end((err, res) => {
       error = error || errors.invalidAuth;
       error.status = error.status || 400;
       validateError(err, res, error);

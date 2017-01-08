@@ -14,6 +14,11 @@ const errors = {
     id: 'validationerror',
     message: 'validation failed'
   },
+  invalidId: {
+    status: 400,
+    id: 'invalidid',
+    message: 'Invalid id'
+  },
   invalid: (model, field) => {
     return {
       id: 'validationerror',
@@ -248,6 +253,10 @@ class ResponseValidator {
     res.body.error.should.have.property('fields');
     res.body.error.fields.should.have.property(error.fields);
   }
+  invalidIdError(err, res) {
+    let error = errors.invalidId;
+    validateError(err, res, error);
+  }
   duplicateError(Model, err, res) {
     let error = errors.duplicate(Model);
     validateError(err, res, error);
@@ -282,7 +291,6 @@ function findModelInResponse(models, model) {
 }
 
 function validateSuccess(err, res, status) {
-  if (err) console.warn(err);
   should.not.exist(err);
   should.exist(res);
   res.should.be.json;

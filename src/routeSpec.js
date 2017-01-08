@@ -39,7 +39,7 @@ class RouteSpec {
         delete: ['*']
       }
     };
-    this.setOptions(options);
+    if (options) this.setOptions(options);
     this.request = request;
     this.token = null;
 
@@ -208,7 +208,7 @@ class RouteSpec {
     let role = this.options.permissions[method];
 
     if (!role) return false;
-    
+
     role =  typeof role === 'string' ? [role] : role;
     let roles = user.roles;
     return role.some(r => roles.indexOf(r) > -1) ? role[0] : false;

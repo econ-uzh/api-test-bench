@@ -55,20 +55,20 @@ module.exports.authorized = (Spec) => {
           return done();
         });
       });
-      it(`should not update a ${modelName} with non existent ${options.required}`,
-        done => {
-          model[options.required] = ObjectId();
-          requests.put(model).end((err, res) => {
-            let error = {
-              id: 'validationerror',
-              message: `${Model.modelName} validation failed`,
-              fields: options.required
-            };
-            validate.badRequest(err, res, error);
-            return done();
-          });
-        });
     }
+    it(`should not update a ${modelName} with no ${options.required}`,
+      done => {
+        model[options.required] = null;
+        requests.put(model).end((err, res) => {
+          let error = {
+            id: 'validationerror',
+            message: `${Model.modelName} validation failed`,
+            fields: options.required
+          };
+          validate.badRequest(err, res, error);
+          return done();
+        });
+      });
   });
 };
 

@@ -58,20 +58,20 @@ module.exports.authorized = (Spec) => {
           return done();
         });
       });
-      it(`should not create a ${modelName} with non existent ${options.required}`,
-        done => {
-          model[options.required] = ObjectId();
-          requests.post(model).end((err, res) => {
-            let error = {
-              id: 'validationerror',
-              message: `${Model.modelName} validation failed`,
-              fields: options.required
-            };
-            validate.badRequest(err, res, error);
-            return done();
-          });
-        });
     }
+    it(`should not create a ${modelName} with non existent ${options.required}`,
+      done => {
+        model[options.required] = null;
+        requests.post(model).end((err, res) => {
+          let error = {
+            id: 'validationerror',
+            message: `${Model.modelName} validation failed`,
+            fields: options.required
+          };
+          validate.badRequest(err, res, error);
+          return done();
+        });
+      });
   });
 };
 module.exports.unauthorized = (Spec) => {

@@ -192,6 +192,8 @@ class ResponseValidator {
 
     let idx = fields.indexOf('_id');
     if (idx >= 0) fields.splice(idx, 1);
+    idx = fields.indexOf('__v');
+    if (idx >= 0) fields.splice(idx, 1);
 
     fields.forEach(field => {
       if (field === 'timestamps') {

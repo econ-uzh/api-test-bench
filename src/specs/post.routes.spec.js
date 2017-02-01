@@ -34,7 +34,7 @@ module.exports.authorized = (Spec) => {
       });
     });
     it(`should not create a ${modelName} with no ${options.required}`, done => {
-      model[options.required] = null;
+      model = Spec.setField(model, options.required, null);
       requests.post(model).end((err, res) => {
         let error = {
           id: 'validationerror',
@@ -47,7 +47,7 @@ module.exports.authorized = (Spec) => {
     });
     if (options.checkInvalid) {
       it(`should not create a ${modelName} with invalid ${options.required}`, done => {
-        model[options.required] = 'foobar';
+        model = Spec.setField(model, options.required, 'foobar');
         requests.post(model).end((err, res) => {
           let error = {
             id: 'validationerror',
@@ -61,7 +61,7 @@ module.exports.authorized = (Spec) => {
     }
     it(`should not create a ${modelName} with non existent ${options.required}`,
       done => {
-        model[options.required] = null;
+        model = Spec.setField(model, options.required, null);
         requests.post(model).end((err, res) => {
           let error = {
             id: 'validationerror',

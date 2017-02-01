@@ -225,6 +225,17 @@ class RouteSpec {
       return String.fromCharCode(randChar);
     }).join('');
   }
+  setField(model, options, value) {
+    // options can be in dot notation... e.g. name.first or some,
+    // => traverse object until one before element, remove element and return original object
+    let obj = model;
+    const s = options.split('.');
+    let i = 0;
+    while (obj && i < s.length - 1) obj = obj[s[i++]];
+    obj[s[i]] = value;
+
+    return model;
+  }
 }
 
 function parseOptions(_options, options) {

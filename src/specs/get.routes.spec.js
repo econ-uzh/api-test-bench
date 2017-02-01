@@ -16,7 +16,7 @@ module.exports.authorized = (Spec) => {
 
   describe(`GET /${pluralName}/`, () => {
     before(done => {
-      Model.find({}, (err, results) => {
+      Model.find({ 'mark.deleted': { $ne: true }}, (err, results) => {
         should.not.exist(err);
         should.exist(results);
         results.should.be.instanceof(Array);

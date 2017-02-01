@@ -165,7 +165,7 @@ class RouteSpec {
     field = field || this.options.unique.field;
 
     model = this.duplicateModel(model);
-    model[field] = randomString(10);
+    model[field] = this.randomString(10);
 
     switch (type) {
       case 'username':
@@ -218,13 +218,13 @@ class RouteSpec {
     if (this.token) return request.set('Authorization', 'Bearer '  + this.token);
     else return request;
   }
-}
 
-function randomString(length) {
-  return Array(length).fill(null).map(a => {
-    let randChar = Math.floor(Math.random() * 25) + 97;
-    return String.fromCharCode(randChar);
-  }).join('');
+  randomString(length) {
+    return Array(length).fill(null).map(a => {
+      let randChar = Math.floor(Math.random() * 25) + 97;
+      return String.fromCharCode(randChar);
+    }).join('');
+  }
 }
 
 function parseOptions(_options, options) {

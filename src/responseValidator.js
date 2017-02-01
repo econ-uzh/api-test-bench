@@ -200,13 +200,14 @@ class ResponseValidator {
         this.timestamps(resModel.timestamps, testModel.timestamps);
       } else {
         resModel.should.have.property(field);
-        if (isValidId(resModel[field]) || isValidId(testModel[field]))
-        {
+        if (isValidId(resModel[field]) || isValidId(testModel[field])) {
           if (typeof resModel[field] !== 'object') {
             resModel[field].toString().should.eql(testModel[field].toString());
           } // else disregard populated content
         } else if (Date.parse(resModel[field])) {
           // don't check
+        } else if (field === 'mark') {
+          // skip => e.g. mark deleted
         }
         else {
           if (resModel[field] !== null || testModel[field] !== null) {

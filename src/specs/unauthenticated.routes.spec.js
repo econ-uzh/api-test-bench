@@ -28,7 +28,8 @@ module.exports = (Spec) => {
         validate.unauthenticated(requests.getOne(model), done);
       });
       it(`should not be possible to CREATE ${modelName} unauthenticated`, done => {
-        validate.unauthenticated(requests.post(model), done);
+        const model2 = Spec.createRandomModel(model);
+        validate.unauthenticated(requests.post(model2), done);
       });
       it(`should not be possible to UPDATE ${modelName} unauthenticated`, done => {
         validate.unauthenticated(requests.put(model), done);

@@ -1,8 +1,6 @@
 'use strict';
 
 const should = require('chai').should();
-const mongoose = require('mongoose');
-const ObjectId = mongoose.Types.ObjectId;
 
 module.exports.authorized = (Spec) => {
   let Model = Spec.model;

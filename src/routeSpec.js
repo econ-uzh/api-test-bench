@@ -6,11 +6,12 @@ const ResponseValidator = require('./responseValidator');
 
 class RouteSpec {
 
-  constructor(model, url, request, options) {
+  constructor(model, url, request, options, apiURL) {
     if (new.target === RouteSpec) {
       throw new TypeError('Cannot construct Abstract instance RouteSpec directly');
     }
 
+    this.apiUrl = apiUrl || apiURL;
     this.url = url;
     this.model = model;
     this.modelName = this.model.modelName.toLowerCase();
@@ -56,7 +57,7 @@ class RouteSpec {
   }
 
   registerRequests() {
-    let url = apiUrl + this.url;
+    let url = this.apiUrl + this.url;
     if (url.substr(-1) !== '/') url += '/';
     this.requests = {
       get: (u) => this.next(this.request.get(u || url)),
@@ -65,10 +66,10 @@ class RouteSpec {
       post: (model, u) => this.next(this.request.post((u || url)).send(model)),
       put: (model, u) => this.next(this.request.put(u || (url + model._id)).send(model)),
       delete: (model, u) => this.next(this.request.del(u || (url + model._id))),
-      signout: () => this.request.post(apiUrl + 'auth/signout'),
+      signout: () => this.request.post(this.apiUrl + 'auth/signout'),
       signin: (user, request) => {
         return (request || this.request)
-        .post(apiUrl + 'auth/signin/')
+        .post(this.apiUrl + 'auth/signin/')
         .send(user);
       }
     };

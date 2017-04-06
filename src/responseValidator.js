@@ -82,7 +82,7 @@ class ResponseValidator {
     req.end((err, res) => {
       should.not.exist(err);
       should.exist(res);
-      res.should.have.status(200);
+      res.should.have.property('status', 200);
       res.should.have.property('body');
 
       let resUser;
@@ -120,7 +120,7 @@ class ResponseValidator {
     req.end((err, res) => {
       should.not.exist(err);
       should.exist(res);
-      res.should.have.status(200);
+      res.should.have.property('status', 200);
       res.should.have.property('body');
       res.body.should.have.property('message');
       res.body.message.should.equal('logout successful');
@@ -159,7 +159,7 @@ class ResponseValidator {
     should.not.exist(err);
     should.exist(res);
     res.should.be.json;
-    res.should.have.status(200);
+    res.should.have.property('status', 200);
     res.should.have.property('body');
     res.body.should.have.property('meta');
     res.body.data.should.be.an.Object;
@@ -297,7 +297,7 @@ function validateSuccess(err, res, status) {
   should.not.exist(err);
   should.exist(res);
   res.should.be.json;
-  res.should.have.status(status);
+  res.should.have.property('status', status);
   res.should.have.property('body');
 }
 
@@ -305,7 +305,7 @@ function validateError(err, res, error) {
   should.exist(err);
   should.exist(res);
   res.should.be.json;
-  res.should.have.status(error.status);
+  res.should.have.property('status', error.status);
   res.should.have.property('body');
   res.body.should.have.property('error');
   res.body.error.should.have.property('id', error.id);

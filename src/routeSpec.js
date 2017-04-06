@@ -1,7 +1,7 @@
 'use strict';
 
 const specs = require('./specs');
-const apiUrl = '/api/v0/'; // TODO: read from conf
+const fallbackApiUrl = '/api/v0/';
 const ResponseValidator = require('./responseValidator');
 
 class RouteSpec {
@@ -11,7 +11,7 @@ class RouteSpec {
       throw new TypeError('Cannot construct Abstract instance RouteSpec directly');
     }
 
-    this.apiUrl = apiUrl || apiURL;
+    this.apiUrl = apiURL || fallbackApiUrl;
     this.url = url;
     this.model = model;
     this.modelName = this.model.modelName.toLowerCase();

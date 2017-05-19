@@ -309,7 +309,8 @@ function validateError(err, res, error) {
   res.should.have.property('body');
   res.body.should.have.property('error');
   res.body.error.should.have.property('id', error.id);
-  res.body.error.should.have.property('message', error.message);
+  res.body.error.should.have.property('message');
+  res.body.error.message.indexOf(error.message).should.be.equal(0);
 }
 
 module.exports = ResponseValidator;

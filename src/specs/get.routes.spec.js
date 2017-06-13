@@ -54,15 +54,23 @@ module.exports.authorized = (Spec) => {
         let filter = options.filter;
         let search = filter.value;
         let query = {};
-        query[filter.attribute] = search;
-        filter.model.findOne(query, (err, result) => {
+        query[filter.attribute] = {
+          '$options': 'i',
+          '$regex': search
+        };
+
+        filter.model.find(query, (err, results) => {
           should.not.exist(err);
-          should.exist(result);
+          should.exist(results);
+          results.should.be.instanceof(Array);
+          results.should.have.length.above(0);
           query = {};
-          query[filter.key] = result._id;
+          query[filter.key] = results.map(r => r._id);
           Model.find(query, (err, results) => {
             should.not.exist(err);
-            should.exist(result);
+            should.exist(results);
+            results.should.be.instanceof(Array);
+            results.should.have.length.above(0);
             validate.query(
               models,
               total,

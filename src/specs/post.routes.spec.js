@@ -18,7 +18,9 @@ module.exports.authorized = (Spec) => {
         should.not.exist(err);
         should.exist(result);
         model = result;
+        if (model.roles) model.roles = ['user'];
         delete model.timestamps;
+
         return done();
       });
     });

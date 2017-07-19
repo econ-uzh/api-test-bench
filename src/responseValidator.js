@@ -228,7 +228,7 @@ class ResponseValidator {
     timestamps.created.should.have.property('at');
     let createdTime = new Date(timestamps.created.at).getTime();
     let createdTimeOld = new Date(oldTimestamps.created.at).getTime();
-    createdTime.should.be.approximately(createdTimeOld, 1);
+    createdTime.should.be.approximately(createdTimeOld, 5);
     timestamps.should.have.property('updated');
     timestamps.updated.should.have.property('by');
     timestamps.updated.should.have.property('at');

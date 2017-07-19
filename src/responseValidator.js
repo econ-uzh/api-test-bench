@@ -103,8 +103,6 @@ class ResponseValidator {
       resUser.lastName.should.equal(user.lastName);
       resUser.should.have.property('username');
       resUser.username.should.equal(user.username);
-      resUser.should.have.property('email');
-      resUser.email.should.equal(user.email);
       resUser.should.have.property('roles');
       resUser.roles.should.be.a('array');
       resUser.roles.forEach((r) => {

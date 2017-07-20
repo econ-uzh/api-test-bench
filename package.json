@@ -1,6 +1,6 @@
 {
   "name": "api-test-bench",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A test bench for testing internal rest api's",
   "main": "index.js",
   "engines": {

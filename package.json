@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/econ-uzh/api-test-bench.git"
+    "url": "https://github.com/econ-uzh/api-test-bench/"
   },
   "keywords": [
     "node",
@@ -20,7 +20,10 @@
     "es6",
     "mongoose"
   ],
-  "author": "Adrian Etter",
+  "author": {
+    "name": "Adrian Etter",
+    "email": "adrian.etter@econ.uzh.ch"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/econ-uzh/api-test-bench/issues"
@@ -31,7 +34,11 @@
     "eslint-plugin-node": "^3.0.5"
   },
   "dependencies": {
-    "chai": "^3.5.0",
+    "chai": "^4.0.0",
+    "mongoose": "^4.7.6"
+  },
+  "peerDependencies": {
+    "chai": "^4.0.0",
     "mongoose": "^4.7.6"
   }
 }

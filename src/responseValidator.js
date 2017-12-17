@@ -160,7 +160,7 @@ class ResponseValidator {
     res.should.have.property('status', 200);
     res.should.have.property('body');
     res.body.should.have.property('meta');
-    res.body.data.should.be.an.Object;
+    res.body.meta.should.be.an.Object;
     res.body.should.have.property('data');
     res.body.data.should.be.instanceof(Array);
     res.body.data.should.have.length(maxlength);

@@ -88,7 +88,7 @@ module.exports.unauthorized = (Spec) => {
         should.not.exist(err);
         should.exist(result);
         result = result.toObject();
-        result.should.be.an.Object;
+        result.should.be.an('object');
         model = Spec.duplicateModel(result);
         model = Spec.createRandomModel(model);
         return done();

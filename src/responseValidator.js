@@ -199,7 +199,7 @@ class ResponseValidator {
       } else {
         resModel.should.have.property(field);
         if (isValidId(resModel[field]) || isValidId(testModel[field])) {
-          if (typeof resModel[field] !== 'object') {
+          if (typeof resModel[field] !== 'object' && !isValidId(resModel[field])) {
             resModel[field].toString().should.eql(testModel[field].toString());
           } // else disregard populated content
         } else if (Date.parse(resModel[field])) {
@@ -209,7 +209,22 @@ class ResponseValidator {
         }
         else {
           if (resModel[field] !== null || testModel[field] !== null) {
-            resModel[field].should.eql(testModel[field]);
+            if (
+              typeof resModel[field] == 'object' || typeof testModel[field] == 'object'
+            ) {
+              Object.keys(testModel[field]).forEach((fieldName) => {
+                if (
+                  isValidId(resModel[field][fieldName]) ||
+                  isValidId(testModel[field][fieldName])
+                ) {
+                  resModel[field][fieldName].toString().should.eql(
+                    testModel[field][fieldName].toString()
+                  );
+                } else {
+                  resModel[field][fieldName].should.eql(testModel[field][fieldName]);
+                }
+              });
+            } else resModel[field].should.eql(testModel[field]);
           } // else it's supposed to be null
 
         }
@@ -219,6 +234,7 @@ class ResponseValidator {
     resModel.should.not.have.property('password');
     resModel.should.not.have.property('salt');
   }
+
   timestamps(timestamps, oldTimestamps) {
     should.exist(timestamps);
     timestamps.should.have.property('created');
